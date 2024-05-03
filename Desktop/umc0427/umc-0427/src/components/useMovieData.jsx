@@ -20,7 +20,7 @@ const useMovieData = (url, params, headers) => {
     fetchMovies();
   }, [url, params,headers]);
 
-  return {results:movies.results, isLoading};
+  return {results: movies.results, isLoading};
 };
 
 export default useMovieData;
