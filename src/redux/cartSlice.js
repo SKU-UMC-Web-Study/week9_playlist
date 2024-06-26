@@ -2,9 +2,9 @@ import { createSlice } from '@reduxjs/toolkit';
 import cartItems from '../constants/cartItems';
 
 const initialState = {
-  items: cartItems,
-  totalQuantity: 0,
+  items: cartItems, 
   totalAmount: 0,
+  totalQuantity:0
 };
 
 export const cartSlice = createSlice({
@@ -39,11 +39,11 @@ export const cartSlice = createSlice({
       let totalQuantity = 0;
       let totalAmount = 0;
       state.items.forEach(item => {
-        totalQuantity += item.amount;
         totalAmount += item.price * item.amount;
+        totalQuantity+=item.amount;
       });
-      state.totalQuantity = totalQuantity;
       state.totalAmount = totalAmount;
+      state.totalQuantity = totalQuantity;
     }
   }
 });

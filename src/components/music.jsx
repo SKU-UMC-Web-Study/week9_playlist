@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { CartIcon, ChevronDown, ChevronUp } from '../constants/icons';
-import { increase, decrease, removeItem, calculateTotals } from '../redux/cartSlice';
+import { increase, decrease, calculateTotals } from '../redux/cartSlice';
 
 const Container = styled.div`
   display: flex;
@@ -12,11 +12,12 @@ const Container = styled.div`
 `;
 
 const Navbar = styled.nav`
-  width: 100%; /* Navbar가 전체 너비를 차지하도록 설정 */
+  width: 100%; 
   display: flex;
   justify-content: space-between;
   padding: 10px;
-  
+  background-color: blue;
+  color: white;
 `;
 
 const MusicContainer = styled.div`
@@ -50,8 +51,6 @@ const MusicDetail = styled.div`
 `;
 
 const ChangeCon = styled.div`
-  
-  
 `;
 
 const IconButton = styled.button`
@@ -77,49 +76,79 @@ const IconButton = styled.button`
     height: 24px;
   }
 `;
+
 const CartCon = styled.div`
-display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px;
-`
+position: relative;
+width: 60px;
+cursor: pointer;
+color: white;
+`;
+
+const Total = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+`;
+const CartItemCount = styled.div`
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background-color:#84C2FF;
+  color: white;
+  border-radius: 50%;
+  padding: 5px;
+  font-size: 20px;
+`;
+
 const Music = () => {
-  const musicList = useSelector((state) => state.cart.items);
+  const cart = useSelector((state) => state.cart);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(calculateTotals());
+  }, [cart.items, dispatch]);
 
   return (
     <>
-    <Navbar>
-        <p>Ssoy playlist</p>
-        
-    </Navbar>
-    
-    <Container>
+      <Navbar>
+        <h2>Ssoy playlist</h2>
+        <CartCon>
+          <CartIcon  />
+          <CartItemCount>{cart.totalQuantity}</CartItemCount>
+        </CartCon>
+      </Navbar>
       
-      <MusicContainer>
-        <MusicList>
-          <h2>당신이 선택한 음반</h2>
-          {musicList.map((music) => (
-            <MusicCon key={music.id}>
-              <MusicCover src={music.img} alt={music.title} />
-              <MusicDetail>
-                <p>{music.title} | {music.singer}</p>
-                <p>W{music.price}</p>
-              </MusicDetail>
-              <ChangeCon>
-                <IconButton onClick={() => alert('Chevron Up clicked')}>
-                  <ChevronUp />
-                </IconButton>
-                <p>{music.amount}</p>
-                <IconButton onClick={() => alert('Chevron Down clicked')}>
-                  <ChevronDown />
-                </IconButton>
-              </ChangeCon>
-            </MusicCon>
-          ))}
-        </MusicList>
-      </MusicContainer>
-    </Container>
+      <Container>
+        <MusicContainer>
+          <MusicList>
+            <h2>당신이 선택한 음반</h2>
+            {cart.items.map((music) => (
+              <MusicCon key={music.id}>
+                <MusicCover src={music.img} alt={music.title} />
+                <MusicDetail>
+                  <p>{music.title} | {music.singer}</p>
+                  <p>W{music.price}</p>
+                </MusicDetail>
+                <ChangeCon>
+                  <IconButton onClick={() => dispatch(increase(music))}>
+                    <ChevronUp />
+                  </IconButton>
+                  <p>{music.amount}</p>
+                  <IconButton onClick={() => dispatch(decrease(music))}>
+                    <ChevronDown />
+                  </IconButton>
+                </ChangeCon>
+              </MusicCon>
+            ))}
+          </MusicList>
+          <hr />
+          <Total>
+            <p>총 가격</p>
+            <p>W{cart.totalAmount}</p>
+          </Total>
+          
+        </MusicContainer>
+      </Container>
     </>
   );
 };
