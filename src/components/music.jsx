@@ -2,8 +2,10 @@ import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { CartIcon, ChevronDown, ChevronUp } from '../constants/icons';
-import { increase, decrease, calculateTotals } from '../redux/cartSlice';
-
+import { increase, decrease, calculateTotals } from '../redux/thunk';
+import {fetchMusic} from '../redux/thunk';
+import Error from './error';
+import Loading from './loading'
 const Container = styled.div`
   display: flex;
   flex-direction: column; 
@@ -104,9 +106,15 @@ const Music = () => {
   const cart = useSelector((state) => state.cart);
   const dispatch = useDispatch();
 
+  useEffect(()=>{
+    dispatch(fetchMusic());
+  },[dispatch]);
+
   useEffect(() => {
     dispatch(calculateTotals());
   }, [cart.items, dispatch]);
+
+  
 
   return (
     <>
@@ -119,6 +127,11 @@ const Music = () => {
       </Navbar>
       
       <Container>
+      {cart.loading ? (
+          <Loading/>
+        ) : cart.error ? (
+          <Error/>
+        ) : (
         <MusicContainer>
           <MusicList>
             <h2>당신이 선택한 음반</h2>
@@ -148,6 +161,7 @@ const Music = () => {
           </Total>
           
         </MusicContainer>
+        )}
       </Container>
     </>
   );
